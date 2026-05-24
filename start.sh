@@ -5,14 +5,15 @@ mkdir -p /paperclip/instances/default/logs
 chown -R node:node /paperclip
 
 CONFIG_PATH="/paperclip/instances/default/config.json"
-if [ ! -f "$CONFIG_PATH" ]; then
-  cat > "$CONFIG_PATH" <<'CONF'
+if true; then
+  PUBLIC_URL="${PAPERCLIP_PUBLIC_URL:-http://localhost:3100}"
+  cat > "$CONFIG_PATH" <<CONF
 {
-  "$meta": { "version": 1, "updatedAt": "2026-01-01T00:00:00Z", "source": "onboard" },
+  "\$meta": { "version": 1, "updatedAt": "2026-01-01T00:00:00Z", "source": "onboard" },
   "database": { "mode": "postgres", "backup": { "enabled": true, "intervalMinutes": 60, "retentionDays": 7, "dir": "/paperclip/instances/default/data/backups" } },
   "logging": { "mode": "file", "logDir": "/paperclip/instances/default/logs" },
   "server": { "deploymentMode": "authenticated", "exposure": "public", "bind": "lan", "host": "0.0.0.0", "port": 3100, "serveUi": true },
-  "auth": { "baseUrlMode": "explicit", "disableSignUp": false },
+  "auth": { "baseUrlMode": "explicit", "publicBaseUrl": "${PUBLIC_URL}", "disableSignUp": false },
   "storage": { "provider": "local_disk", "localDisk": { "baseDir": "/paperclip/instances/default/data/storage" } },
   "secrets": { "provider": "local_encrypted", "strictMode": false, "localEncrypted": { "keyFilePath": "/paperclip/instances/default/secrets/master.key" } },
   "telemetry": { "enabled": false }
