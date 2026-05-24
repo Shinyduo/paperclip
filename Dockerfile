@@ -21,10 +21,12 @@ FROM base AS production
 WORKDIR /app
 COPY --from=build /app /app
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends openssh-client jq \
+  && apt-get install -y --no-install-recommends openssh-client jq gosu \
   && rm -rf /var/lib/apt/lists/* \
-  && mkdir -p /paperclip \
-  && chown node:node /paperclip
+  && mkdir -p /paperclip
+
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 ENV NODE_ENV=production \
   HOME=/paperclip \
@@ -39,5 +41,4 @@ ENV NODE_ENV=production \
 
 EXPOSE 3100
 
-USER node
-CMD ["node", "--import", "./server/node_modules/tsx/dist/loader.mjs", "server/dist/index.js"]
+CMD ["start.sh"]
